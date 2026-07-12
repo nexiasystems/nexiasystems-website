@@ -288,3 +288,101 @@ footer{background:var(--night);border-top:1px solid var(--night-line);padding:2.
 .foot{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--night-mute)}
 .foot a:hover,.foot a:focus-visible{color:var(--night-text)}
 .foot .fl{display:flex;gap:1.8rem;align-items:center}
+
+/* --------------------------------------------------------------------------
+   Páginas legales — mismo sistema visual
+   -------------------------------------------------------------------------- */
+.legal-hero{background:var(--night);color:var(--night-text);padding:11rem 0 5rem}
+.legal-hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.4rem,5vw,4rem);line-height:1.1;letter-spacing:-.005em}
+.legal-hero .kicker{margin-bottom:2rem}
+.legal-body{background:var(--paper);padding:clamp(5rem,10vh,8rem) 0}
+.legal{max-width:46rem}
+.legal h2{font-size:clamp(1.5rem,2.6vw,2rem);margin:4rem 0 1.4rem;max-width:none}
+.legal h2:first-child{margin-top:0}
+.legal p,.legal li{color:var(--ink-soft);text-align:justify;hyphens:auto;-webkit-hyphens:auto;margin-bottom:1.4rem;font-size:1rem}
+.legal ul{list-style:none;margin-bottom:1.4rem}
+.legal li{padding-left:1.6rem;position:relative;margin-bottom:.9rem}
+.legal li::before{content:'';position:absolute;left:0;top:.85em;width:.7rem;height:1px;background:var(--accent)}
+.legal strong{color:var(--ink);font-weight:500}
+.legal a{border-bottom:1px solid var(--accent);transition:color .25s}
+.legal a:hover{color:var(--accent)}
+.legal .updated{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:3rem;text-align:left}
+.legal table{width:100%;border-collapse:collapse;margin:2rem 0;font-size:.9rem}
+.legal th{text-align:left;font-weight:500;color:var(--ink);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;padding:.9rem .8rem .9rem 0;border-bottom:1px solid var(--ink)}
+.legal td{padding:1rem .8rem 1rem 0;border-bottom:1px solid var(--paper-line);color:var(--ink-soft);vertical-align:top;text-align:left}
+.legal .placeholder{background:rgba(14,143,143,.08);padding:0 .3rem;color:var(--accent)}
+
+/* --------------------------------------------------------------------------
+   v1.1 — Logo, accesibilidad, idioma y responsive de botones
+   -------------------------------------------------------------------------- */
+.logo{display:inline-flex;align-items:center;gap:.7rem}
+.logo-mark{width:1.05rem;height:1.05rem;color:var(--accent);flex:none}
+
+.skip-link{
+  position:absolute;left:-9999px;top:0;z-index:100;
+  background:var(--accent);color:#fff;padding:.8rem 1.4rem;
+  font-family:var(--sans);font-size:.85rem;border-radius:0 0 2px 0;
+}
+.skip-link:focus{left:0}
+
+.lang a{transition:color .25s}
+.lang a[aria-current="true"]{color:var(--night-text)}
+.lang a.lang-off{opacity:.4;cursor:default;pointer-events:none}
+.foot .lang a[aria-current="true"]{color:var(--night-text)}
+
+.f-field .opt{text-transform:none;letter-spacing:0;opacity:.7}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.form-error{font-size:.82rem;color:#c96a6a;margin-bottom:1.6rem;line-height:1.6}
+
+/* Botones en móvil: bloque centrado, nunca partidos en dos líneas raras */
+@media (max-width:560px){
+  .btn,.btn-ghost{
+    display:block;width:100%;max-width:22rem;
+    margin-left:auto;margin-right:auto;
+    text-align:center;white-space:normal;
+    padding:1.05rem 1.4rem;
+  }
+  .hero .btn{margin-left:0}
+  .mid-cta{text-align:center}
+  .foot{justify-content:center;text-align:center}
+  .form-shell{max-width:100%}
+}
+
+
+/* --------------------------------------------------------------------------
+   v1.2 — Campos select y textarea del formulario (mismo lenguaje visual)
+   -------------------------------------------------------------------------- */
+.f-field select,.f-field textarea{
+  width:100%;background:transparent;border:none;
+  border-bottom:1px solid var(--night-line);
+  color:var(--night-text);font-family:var(--sans);font-size:1rem;
+  padding:.6rem 0;outline:none;transition:border-color .25s;
+}
+.f-field select:focus,.f-field textarea:focus{border-color:var(--accent)}
+.f-field select{appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238b8e94' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .2rem center;}
+.f-field select option{background:var(--night);color:var(--night-text)}
+.f-field textarea{resize:vertical;min-height:5.5rem;line-height:1.7}
+.form-shell.open{max-height:72rem}
+
+
+/* --------------------------------------------------------------------------
+   v1.2 — Widget flotante de diagnóstico (aparece tras el hero,
+   desaparece al llegar al cierre). Discreto, sin sombras, sin efectos.
+   -------------------------------------------------------------------------- */
+.dock{
+  position:fixed;bottom:1.6rem;right:1.6rem;z-index:20;
+  display:inline-flex;align-items:center;gap:.65rem;
+  background:var(--night);color:var(--night-text);
+  border:1px solid var(--night-line);border-radius:2px;
+  font-family:var(--sans);font-size:.8125rem;font-weight:500;letter-spacing:.02em;
+  padding:.85rem 1.3rem;
+  opacity:0;transform:translateY(8px);pointer-events:none;
+  transition:opacity .4s ease,transform .4s ease,border-color .25s;
+}
+.dock::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;flex:none}
+.dock.show{opacity:1;transform:none;pointer-events:auto}
+.dock:hover,.dock:focus-visible{border-color:var(--accent)}
+@media (max-width:560px){.dock{bottom:1rem;right:1rem;left:auto;padding:.8rem 1.1rem}}
+@media (prefers-reduced-motion: reduce){.dock{transition:none}}

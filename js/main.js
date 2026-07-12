@@ -1,16 +1,26 @@
 /* ==========================================================================
-   NEXIA Systems — main.js
-   1. Revelado suave de contenido al hacer scroll (IntersectionObserver)
-   2. Despliegue del formulario de diagnóstico en la pantalla de cierre
-   3. Validación mínima y confirmación
-   NOTA: el envío real del formulario debe conectarse en el punto marcado
-   con "CONEXIÓN DE ENVÍO" (endpoint propio, Formspree, Make, CRM, etc.)
+   NEXIA Systems — main.js (v1.1)
+   1. Revelado suave de contenido al hacer scroll
+   2. Despliegue del formulario de diagnóstico
+   3. Validación accesible y envío preparado para GoHighLevel
    ========================================================================== */
 
 (function () {
   'use strict';
 
-  /* 1. Revelado al hacer scroll ------------------------------------------ */
+  /* ------------------------------------------------------------------
+     CONFIGURACIÓN DE ENVÍO — GoHighLevel
+     Al conectar el CRM, pegar aquí la URL del webhook de GHL
+     (Automations → Workflow → Inbound Webhook) o del form endpoint.
+     Mientras esté vacío, el formulario muestra la confirmación local
+     y NO envía datos a ningún sitio.
+     Mapeo de campos ya alineado con GHL:
+       full_name · company_name · email · phone · annual_revenue ·
+       message · source · page
+  ------------------------------------------------------------------ */
+  var GHL_ENDPOINT = ''; // ← pegar aquí el webhook de GoHighLevel
+
+  /* 1. Revelado al hacer scroll ------------------------------------- */
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
@@ -24,11 +34,12 @@
     observer.observe(el);
   });
 
-  /* 2. Formulario de diagnóstico ----------------------------------------- */
+  /* 2. Despliegue del formulario ------------------------------------ */
   var openBtn = document.getElementById('openForm');
   var shell   = document.getElementById('formShell');
   var form    = document.getElementById('diagForm');
   var okMsg   = document.getElementById('formOk');
+  var errMsg  = document.getElementById('formError');
 
   if (openBtn && shell) {
     openBtn.addEventListener('click', function () {
@@ -41,34 +52,65 @@
     });
   }
 
-  /* 3. Validación y confirmación ------------------------------------------ */
+  /* 3. Validación y envío -------------------------------------------- */
+  function emailValido(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  }
+
   if (form && okMsg) {
     form.addEventListener('submit', function (ev) {
       ev.preventDefault();
 
+      /* Honeypot antispam: si el campo oculto tiene valor, es un bot. */
+      var hp = form.querySelector('input[name="website"]');
+      if (hp && hp.value) { form.style.display = 'none'; okMsg.style.display = 'block'; return; }
+
       var valid = true;
-      form.querySelectorAll('input').forEach(function (input) {
-        if (!input.value.trim()) {
-          valid = false;
-          input.style.borderColor = '#a04040';
-        } else {
-          input.style.borderColor = '';
-        }
+      form.querySelectorAll('input[required], textarea[required]').forEach(function (input) {
+        var bad = !input.value.trim() ||
+                  (input.type === 'email' && !emailValido(input.value.trim()));
+        input.style.borderColor = bad ? '#c96a6a' : '';
+        input.setAttribute('aria-invalid', bad ? 'true' : 'false');
+        if (bad) valid = false;
       });
+      if (errMsg) errMsg.hidden = valid;
       if (!valid) return;
 
-      /* --- CONEXIÓN DE ENVÍO -------------------------------------------
-         Sustituir este bloque por el envío real, por ejemplo:
+      var datos = Object.fromEntries(new FormData(form));
+      delete datos.website;                       /* honeypot fuera   */
+      datos.source = 'web-nexiasystems';          /* origen del lead  */
+      datos.page   = window.location.pathname;    /* página de envío  */
 
-         fetch('https://TU-ENDPOINT', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify(Object.fromEntries(new FormData(form)))
-         }).then(function () { ... });
-      ------------------------------------------------------------------- */
+      function confirmar() {
+        form.style.display = 'none';
+        okMsg.style.display = 'block';
+        okMsg.focus && okMsg.focus();
+      }
 
-      form.style.display = 'none';
-      okMsg.style.display = 'block';
+      if (GHL_ENDPOINT) {
+        fetch(GHL_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        }).then(confirmar).catch(confirmar);
+      } else {
+        confirmar();
+      }
     });
+  }
+
+  /* 4. Widget flotante de diagnóstico ------------------------------- */
+  var dock  = document.getElementById('dock');
+  var hero  = document.querySelector('.hero');
+  var cover = document.getElementById('contacto');
+  if (dock && hero && cover && 'IntersectionObserver' in window) {
+    dock.hidden = false;
+    var heroVisible = true, coverVisible = false;
+    function refresh(){
+      if (!heroVisible && !coverVisible) dock.classList.add('show');
+      else dock.classList.remove('show');
+    }
+    new IntersectionObserver(function(e){ heroVisible  = e[0].isIntersecting; refresh(); }, {threshold:0.05}).observe(hero);
+    new IntersectionObserver(function(e){ coverVisible = e[0].isIntersecting; refresh(); }, {threshold:0.05}).observe(cover);
   }
 })();
