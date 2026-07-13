@@ -18,7 +18,7 @@
        full_name · company_name · email · phone · annual_revenue ·
        message · source · page
   ------------------------------------------------------------------ */
-  var GHL_ENDPOINT = ''; // ← pegar aquí el webhook de GoHighLevel
+  var GHL_ENDPOINT = 'https://demo-n8n.zdnh0p.easypanel.host/webhook/37e87ad4-f6a3-4148-9884-4a2e0c8c1f36'
 
   /* 1. Revelado al hacer scroll ------------------------------------- */
   var observer = new IntersectionObserver(function (entries) {
