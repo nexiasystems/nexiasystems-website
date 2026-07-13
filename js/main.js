@@ -18,7 +18,7 @@
        full_name · company_name · email · phone · annual_revenue ·
        message · source · page
   ------------------------------------------------------------------ */
-  var GHL_ENDPOINT = 'https://demo-n8n.zdnh0p.easypanel.host/webhook/37e87ad4-f6a3-4148-9884-4a2e0c8c1f36'
+  var GHL_ENDPOINT = 'https://demo-n8n.zdnh0p.easypanel.host/webhook/37e87ad4-f6a3-4148-9884-4a2e0c8c1f36';
 
   /* 1. Revelado al hacer scroll ------------------------------------- */
   var observer = new IntersectionObserver(function (entries) {
@@ -86,7 +86,7 @@
         okMsg.style.display = 'block';
         okMsg.focus && okMsg.focus();
       }
-
+console.log("GHL_ENDPOINT =", GHL_ENDPOINT);
       if (GHL_ENDPOINT) {
         fetch(GHL_ENDPOINT, {
           method: 'POST',
